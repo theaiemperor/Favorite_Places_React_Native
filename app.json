@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Favorite_Places_React_Native",
-    "slug": "Favorite_Places_React_Native",
+    "name": "Favorite Places",
+    "slug": "favorite_places",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,9 +11,8 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "newArchEnabled": true,
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -32,7 +31,8 @@
         {
           "cameraPermission": "The app needs access to your camera for saving your favourite place image."
         }
-      ]
+      ],
+      "expo-sqlite"
     ]
   }
 }

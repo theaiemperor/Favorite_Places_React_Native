@@ -1,32 +1,20 @@
-import {SQLiteDatabase} from "expo-sqlite";
-import * as FileSystem from 'expo-file-system';
+import { SQLiteDatabase } from "expo-sqlite";
+import * as FileSystem from "expo-file-system";
 
-export default function Remove(database: SQLiteDatabase, id: string): Promise<boolean> {
+export default async function RemovePlace(
+  db: SQLiteDatabase,
+  id: number
+): Promise<boolean> {
+  // 1️⃣ Get image URI to delete file
+  const row = await db.getFirstAsync<{ imageUri: string }>(
+    `SELECT imageUri FROM places WHERE id = ?`,
+    id
+  );
+  if (row && row.imageUri) {
+    await FileSystem.deleteAsync(row.imageUri, { idempotent: true });
+  }
 
-    return new Promise((resolve, reject) => {
-        database.transaction(tx => {
-            tx.executeSql(`
-                SELECT imageUri FROM places WHERE id = ?
-            `, [id],
-                (_, result) => {
-                    const imageUri = result.rows.item(0)?.imageUri;
-                    imageUri && FileSystem.deleteAsync(imageUri, {idempotent: true})
-
-                    tx.executeSql(`
-                        DELETE FROM places WHERE id = ?
-                    `, [id],
-                        (_, deleteResult) => {
-                            resolve(true);
-                        },
-                        (_, error) => {
-                            reject(error);
-                            return false;
-                        });
-                },
-                (_, error) => {
-                    reject(error);
-                    return false;
-                });
-        });
-    });
+  // 2️⃣ Remove record
+  await db.runAsync(`DELETE FROM places WHERE id = ?`, id);
+  return true;
 }
